@@ -87,22 +87,24 @@ module.exports = function(src, dest, options, callback) {
   const child = spawn('java', childArgs);
 
   let e = 0;
-
+  let errorMessages = [];
   if (dest) {
 
     child.stderr.on('data', (data) => {
       e++;
-      child.kill('SIGINT');
-      // TODO: better error handling/messages
-      callback && callback(new Error(data.toString('utf8')));
+      errorMessages.push(data.toString('utf8'));
     });
 
     child.on('close', (code) => {
-      if (e === 0 && code === 1) {
-        return callback && callback(new Error('PDFBox shut down because of a problem.'));
+      if (code === 0) {
+        callback && callback(null);
+      } else {
+        if (e === 0) {
+          return callback && callback(new Error('PDFBox shut down because of a problem.'));  
+        } else {
+          return callback && callback(new Error('PDFBox shut down because of following problems:' + errorMessages));  
+        }
       }
-
-      callback && e === 0 && callback(null);
     });
 
     return this;
