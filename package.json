@@ -10,6 +10,7 @@
     "test": "node test.js",
     "build": "babel source --presets babel-preset-es2015 --out-dir distribution",
     "prepublish": "npm run build",
+    "prepare": "npm run build",
     "setup": "cd source/pdfmerger && mvn clean install",
     "jar": "cd source/pdfmerger && mvn clean compile package"
   },
