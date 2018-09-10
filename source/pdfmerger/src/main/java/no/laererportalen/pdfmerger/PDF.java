@@ -72,7 +72,7 @@ public class PDF {
     } else {
       pdfMerger.setOutputStream(System.out);
     }
-    pdfMerger.merge();
+    pdfMerger.mergeUsingMixedMemoryMode();
   }
 
   public void setOutputStream(OutputStream stream) {
@@ -82,6 +82,16 @@ public class PDF {
   public PDF merge() {
     try {
       pdfboxMerger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+    } catch(IOException e) {
+      System.err.println("Error: Could not merge documents: " + e);
+      System.exit(1);
+    }
+    return this;
+  }
+
+  public PDF mergeUsingMixedMemoryMode() {
+    try {
+      pdfboxMerger.mergeDocuments(MemoryUsageSetting.setupMixed(1024 * 1024 * 1024));
     } catch(IOException e) {
       System.err.println("Error: Could not merge documents: " + e);
       System.exit(1);
